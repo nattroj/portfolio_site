@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch: # Enables manual triggering from the GitHub UI
+  workflow_dispatch:
 
 permissions:
-  contents: write # Required to create releases and tags
+  contents: write
 
 jobs:
   build-and-release:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all history for accurate semantic versioning
+          fetch-depth: 0
 
       - name: Check if .nvmrc exists
         id: nvm-check
@@ -32,13 +32,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ steps.nvm-check.outputs.version }}
-          cache: 'npm'
+          cache: 'yarn' # Changed to optimize and cache Yarn dependencies
 
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile # Ensures the build uses your exact yarn.lock
 
       - name: Run build
-        run: npm run build
+        run: yarn build # Switched to Yarn
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
